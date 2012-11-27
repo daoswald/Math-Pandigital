@@ -13,8 +13,14 @@ To install this module, run the following commands:
 
 DEPENDENCIES
 
-There are no non-core dependencies.
-This module a minimum Perl version of 5.6.0.
+This module uses Any::Moose, which will allow it to work either with Moose or
+with Mouse, depending on your system and application's configuration.
+
+If you are installing using the standard CPAN tools -- (cpan, cpanm or cpanp) --
+and have neither Moose nore Mouse installed, Any::Moose will pull in the
+lighter-weight Mouse automatically.
+
+This module a minimum Perl version of 5.6.2.
 
 SUPPORT AND DOCUMENTATION
 
@@ -32,7 +38,7 @@ You can also look for information at:
         http://annocpan.org/dist/Math-Pandigital
 
     CPAN Ratings
-        http://cpanratings.perl.org/m/Math-Pandigital
+        http://cpanratings.perl.org/d/Math-Pandigital
 
     Search CPAN
         http://search.cpan.org/dist/Math-Pandigital/

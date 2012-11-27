@@ -1,9 +1,12 @@
 ## no critic (RCS,VERSION)
 
+
+BEGIN{ require 5.006_002; }
+
 use strict;
 use warnings;
 
-use ExtUtils::MakeMaker;
+use ExtUtils::MakeMaker 6.30;
 
 ## no critic (may require interpolation)
 WriteMakefile(
@@ -12,14 +15,17 @@ WriteMakefile(
     VERSION_FROM       => 'lib/Math/Pandigital.pm',
     ABSTRACT_FROM      => 'lib/Math/Pandigital.pm',
     LICENSE            => 'perl',
-    MIN_PERL_VERSION   => '5.006000',
+    MIN_PERL_VERSION   => '5.006002',
     PL_FILES           => {},
+    CONFIGURE_REQUIRES => {
+      'ExtUtils::MakeMaker' => '6.30',      # Core, but we need a modern versn.
+    },
     BUILD_REQUIRES => {
-        'Test::More' => '0.98',             # Core, but updated version.
+        'Test::More' => '0.98',             # Core, but specify a minimum versn.
         'English'    => '0',                # Core.
     },
     PREREQ_PM => {
-        'Set::Scalar' => '0',
+        'Any::Moose' => '0',
     },
     META_MERGE => {
         provides => {

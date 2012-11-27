@@ -4,8 +4,6 @@ use strict;
 use warnings;
 use Test::More;
 
-plan skip_all => "POD not implemented.";
-
 # Ensure a recent version of Test::Pod::Coverage
 my $min_tpc = 1.08;
 eval "use Test::Pod::Coverage $min_tpc"; ## no critic (eval)
@@ -19,5 +17,5 @@ my $min_pc = 0.18;
 eval "use Pod::Coverage $min_pc"; ## no critic(eval)
 plan skip_all => "Pod::Coverage $min_pc required for testing POD coverage"
     if $@;
-
-all_pod_coverage_ok();
+my $trustme = { trustme => [qr/^(BUILD)$/] };
+all_pod_coverage_ok($trustme);

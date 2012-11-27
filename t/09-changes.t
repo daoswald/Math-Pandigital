@@ -1,3 +1,6 @@
+#!/usr/bin/env perl
+## no critic(RCS,VERSION,eval,package)
+
 use strict;
 use warnings;
 

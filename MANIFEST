@@ -1,5 +1,5 @@
 Changes
-lib/List/BinarySearch.pm
+lib/Math/Pandigital.pm
 Makefile.PL
 MANIFEST            This list of files
 MANIFEST.SKIP
@@ -15,4 +15,5 @@ t/05-load-prereqs.t
 t/09-changes.t
 t/10-load-can.t
 t/13-kwalitee.t
+t/100-basic_functionality.t
 examples/example.pl
