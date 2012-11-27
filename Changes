@@ -4,6 +4,7 @@ Revision history for Perl module Math::Pandigital
 
   - Explicitly croak if base is set to 1, and zero is unset.
     (Makes no sense to disallow the only digit in the base).
+  - POD fixes.
 
 0.01 2012-11-26
   - Initial release to CPAN.
