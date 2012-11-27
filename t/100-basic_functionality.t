@@ -91,4 +91,18 @@ BEGIN {
   ok( ! $p->is_pandigital('1234566890'), 'unique set: Not pandigital if repeats, correct length.' );
 }
 
+# Test a unary base
+{
+  my $p = Math::Pandigital->new( unique => 1, base => 1 );
+  ok( $p->is_pandigital('0'), 'unary base: 0 is the only pandigital.' );
+  ok( !$p->is_pandigital('00'), 'unique unary; 00 rejected.' );
+  ok( !$p->is_pandigital('1'), 'unary: 1 is rejected.' );
+}
+
+# Test unary with zeros excluded.
+{
+  ok( ! eval 'my $p = Math::Pandigital->new( base => 1, zero => 0 ); 1;',
+      'Throws an exception if base is unary and zeros are excluded.' );
+}
+
 done_testing();

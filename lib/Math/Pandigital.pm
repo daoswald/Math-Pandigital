@@ -38,6 +38,8 @@ sub BUILD {
   my $self = shift;
   croak "Base must be 1 .. 10, or 16"
     unless $self->base > 0 && ( $self->base <= 10 || $self->base == 16 );
+  croak "Unary base can't exclude '0' (Don't un-set attrib zero for base 1)."
+    if $self->base == 1 && $self->zero == 0;
   return;
 }
 
