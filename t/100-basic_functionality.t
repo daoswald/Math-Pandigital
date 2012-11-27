@@ -15,9 +15,9 @@ BEGIN {
 # Test Math::Pandigital::new with defaults.
 {
     my $p = new_ok('Math::Pandigital');
-    is( $p->base,   10, 'base defaults to 10.' );
-    is( $p->unique, 0,  'unique defaults to true.' );
-    is( $p->zero,   1,  'zero indexed defaults to true.' );
+    is( $p->base,       10, 'base defaults to 10.' );
+    is( $p->unique,     0,  'unique defaults to true.' );
+    is( $p->zeroless,   0,  'zero indexed by default.' );
     is_deeply( $p->_digits_array, [ 0 .. 9 ],
         '_digits_array defaults to 0..9' );
     is( ref( $p->_digits_regexp ), 'Regexp',
@@ -26,24 +26,39 @@ BEGIN {
 
 # Test Math::Pandigital::new with parameters.
 {
-    my $p = Math::Pandigital->new( base => 2, unique => 1, zero => 1 );
+    my $p = Math::Pandigital->new( base => 2, unique => 1, zeroless => 1 );
     is( $p->base, 2,
         'Setting base to 2 in constructor propagates to accessor.' );
     is( $p->unique, 1,
         'Setting unique to true in constructor propagates to accessor.' );
-    is( $p->zero, 1,
-        'Setting zero to true in constructor propagates to accessor.' );
+    is( $p->zeroless, 1,
+        'Setting zeroless to true in constructor propagates to accessor.' );
+    is( ref $p->_digits_regexp,
+        'Regexp', '_digits_charclass returned an RE object.' );
+    like( $p->_digits_regexp, qr/\[1\]/,
+        'Base-2 (zeroless) creates a "[1]" character class.' );
+    is_deeply(
+        $p->_digits_array,
+        [ 1 .. 1 ],
+        '_digits_array returns 1 for base 2. '
+    );
+}
+
+# Test base-2 full (non-zeroless)
+{
+    my $p = Math::Pandigital->new( base => 2, unique => 1, zeroless => 0 );
+    is( $p->zeroless, 0,
+        'Setting zeroless to false in constructor propagates to accessor.' );
     is( ref $p->_digits_regexp,
         'Regexp', '_digits_charclass returned an RE object.' );
     like( $p->_digits_regexp, qr/\[01\]/,
-        'Base-2 creates a "[01]" character class.' );
+        'Base-2 (zeroless) creates a "[01]" character class.' );
     is_deeply(
         $p->_digits_array,
         [ 0 .. 1 ],
         '_digits_array returns 0, 1 for base 2. '
     );
 }
-
 # Basic test of Math::Pandigital::is_pandigital().
 {
     my $p = Math::Pandigital->new;
@@ -51,17 +66,18 @@ BEGIN {
         1, '1234567890 is straight pandigital.' );
 }
 
-# Test new( zero => ... );
+# Test new( zeroless => ... );
 {
-    my $p = Math::Pandigital->new( zero => 0 );
-    is( $p->zero, 0, '1-based, base 10' );
+    my $p = Math::Pandigital->new( zeroless => 1 );
+    is( $p->zeroless, 1, '1-based, base 10' );
     ok(
         !$p->is_pandigital('1234567890'),
-        'zero cannot be a digit when zero=> 0'
+        'zero cannot be a digit when zeroless => 1'
     );
-    ok( $p->is_pandigital('123456789'), 'zero=>0; 123456789 is pandigital.' );
+    ok( $p->is_pandigital('123456789'),
+        'zeroless => 1; 123456789 is pandigital.' );
     ok( $p->is_pandigital('1234567899'),
-        'zero=>0; 1234567899 (non-unique) is pandigital.' );
+        'zeroless => 1; 1234567899 (non-unique) is pandigital.' );
 }
 
 # Test out-of-bounds length:
@@ -86,7 +102,8 @@ BEGIN {
         'Base set >10 throws.' );
     ok( !eval 'my $p = Math::Pandigital->new( base => 17 ); 1;',
         'Base set >10 && != 16 throws.' );
-    ok( eval 'my $p = Math::Pandigital->new( base => 1 ); 1;',  'Base 1 ok.' );
+    ok( eval 'my $p = Math::Pandigital->new( base => 1, zeroless => 1 ); 1;',
+        'Base 1 ok.' );
     ok( eval 'my $p = Math::Pandigital->new( base => 10 ); 1;', 'Base 10 ok.' );
     ok( eval 'my $p = Math::Pandigital->new( base => 16 ); 1;', 'Base 16 ok.' );
 }
@@ -114,20 +131,29 @@ BEGIN {
         'unique set: Not pandigital if repeats, correct length.' );
 }
 
+# Test exception thrown if unary base, and zeroless not set.
+{
+  ok( ! eval 'my $p = Math::Pandigital->new( base => 1 ); 1;',
+      'Exception thrown if new called with base 1, and zeroless not set.' );
+}
+  
+
 # Test a unary base
 {
-    my $p = Math::Pandigital->new( unique => 1, base => 1 );
-    ok( $p->is_pandigital('0'),   'unary base: 0 is the only pandigital.' );
-    ok( !$p->is_pandigital('00'), 'unique unary; 00 rejected.' );
-    ok( !$p->is_pandigital('1'),  'unary: 1 is rejected.' );
+    my $p = Math::Pandigital->new( unique => 1, base => 1, zeroless => 1 );
+    ok( $p->is_pandigital('1'),   'unary base: 1 is pandigital.' );
+    ok( !$p->is_pandigital('11'), 'unique unary; 11 rejected.' );
+    ok( !$p->is_pandigital('0'),  'unary: 0 is rejected.' );
 }
 
-# Test unary with zeros excluded.
+# Test unary base, unique => 0; tally mode.
 {
-    ok(
-        !eval 'my $p = Math::Pandigital->new( base => 1, zero => 0 ); 1;',
-        'Throws an exception if base is unary and zeros are excluded.'
-    );
+  my $p = Math::Pandigital->new( base => 1, zeroless => 1 );
+  ok( $p->is_pandigital(1), 'unary base pandigital (non-unique)' );
+  ok( $p->is_pandigital(11),
+      'unary base pandigital, multiple digits, non unique.' );
+  ok( !$p->is_pandigital(10), 'Reject; contains zeros (unary)' );
+  ok( !$p->is_pandigital(2), 'Reject; contains illegal digits for unary.' );
 }
 
 done_testing();
