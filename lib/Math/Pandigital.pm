@@ -123,6 +123,7 @@ Math::Pandigital - Pandigital number detection.
 
 =head1 SYNOPSIS
 
+
     use Math::Pandigital;
 
     my $p = Math::Pandigital->new;
@@ -131,12 +132,15 @@ Math::Pandigital - Pandigital number detection.
       print "$test is pandigital.\n";
     }
     else {
-      print $test is not pandigital.\n";
+      print "$test is not pandigital.\n";
     }
 
+
     my $p = Math::Pandigital->new( base => 8, zeroless => 1, unique => 1 );
+
     print "012345567 is pandigital\n" if $p->is_pandigital('012345567'); # No.
     print "1234567 is pandigital\n" if $p->is_pandigital('1234567');     # Yes.
+
     
 =head1 DESCRIPTION
 
